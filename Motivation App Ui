@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivation Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5dc;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+        }
+        .tab {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab button {
+            background-color: #d4c5a6;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .tab button.active {
+            background-color: #a68c68;
+            color: white;
+        }
+        .graph {
+            width: 100%;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        .popup input, .popup select {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+        .popup button {
+            background-color: #a68c68;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- モチベーショングラフ -->
+        <div id="motivation-graph">
+            <div class="tab">
+                <button id="day-tab" class="active">Day</button>
+                <button id="year-tab">Year</button>
+            </div>
+            <div class="graph" id="graph"></div>
+        </div>
+
+        <!-- モチベーション記録画面 -->
+        <div class="popup" id="record-popup">
+            <label for="record-date">時:</label>
+            <input type="text" id="record-date" readonly>
+
+            <label for="record-motivation">モチベーション:</label>
+            <select id="record-motivation">
+                <option value="1">1 - Low</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - High</option>
+            </select>
+
+            <button id="save-record">保存</button>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const dayTab = document.getElementById('day-tab');
+        const yearTab = document.getElementById('year-tab');
+        const graph = document.getElementById('graph');
+        const recordPopup = document.getElementById('record-popup');
+        const recordDate = document.getElementById('record-date');
+        const recordMotivation = document.getElementById('record-motivation');
+        const saveRecord = document.getElementById('save-record');
+
+        // Event Listeners
+        dayTab.addEventListener('click', () => {
+            dayTab.classList.add('active');
+            yearTab.classList.remove('active');
+        });
+
+        yearTab.addEventListener('click', () => {
+            yearTab.classList.add('active');
+            dayTab.classList.remove('active');
+        });
+
+        graph.addEventListener('click', (e) => {
+            const activeTab = document.querySelector('.tab button.active').id;
+            if (activeTab === 'day-tab') {
+                recordDate.value = 'Selected Day'; // Placeholder
+            } else {
+                recordDate.value = 'Selected Year'; // Placeholder
+            }
+            recordPopup.style.display = 'block';
+        });
+
+        saveRecord.addEventListener('click', () => {
+            const data = {
+                date: recordDate.value,
+                motivation: recordMotivation.value
+            };
+
+            // Save to localStorage
+            let records = JSON.parse(localStorage.getItem('motivationRecords')) || [];
+            records.push(data);
+            localStorage.setItem('motivationRecords', JSON.stringify(records));
+
+            alert('モチベーションを記録しました！');
+            recordPopup.style.display = 'none';
+        });
+
+        // Close popup if clicked outside
+        window.addEventListener('click', (e) => {
+            if (e.target === recordPopup) {
+                recordPopup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
